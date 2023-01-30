@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+// const { type } = require('os');
 
 const sellerSchema = mongoose.Schema(
   {
@@ -18,22 +19,11 @@ const sellerSchema = mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Enter valid email'],
     },
-    // phoneNumber: {
-    //   type: Number,
-    // required: [true, 'Must have a phone number'],
-    // unique: [true, 'Phone number must not be used before'],
-    //   validate: {
-    //     validator: function (num) {
-    //       if (num === undefined) return true;
-    //       match: /^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/,
-    //     },
-    //     message: 'Enter valid phone number',
-    //   },
-    // },
 
     phoneNumber: {
       type: String,
-      match: /^(\()?\d{4}(\))?(-|\s)?\d{7}$/,
+      // match: /^(\()?\d{3}(\))?(-|\s)?\d{7}$/,
+      length: [10, 'must have ==10 length'],
       required: [true, 'Must have a phone number'],
       unique: [true, 'Phone number must not be used before'],
     },
@@ -65,6 +55,21 @@ const sellerSchema = mongoose.Schema(
       type: String,
       enum: ['seller'],
       default: 'seller',
+    },
+
+    cnic: {
+      type: Number,
+      required: [true, 'Must have a cnic number'],
+      length: [13, 'must have ==13 length'],
+      unique: [true, 'Cnic number must not be used before'],
+    },
+
+    cnicPhotoFront: String,
+    cnicPhotoBack: String,
+
+    cnicConfirm: {
+      type: Boolean,
+      default: false,
     },
     passResetToken: String,
     passTokenExpire: Date,

@@ -43,8 +43,8 @@ const buyerSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['buyer'],
-      default: 'buyer',
+      enum: ['Buyer'],
+      default: 'Buyer',
     },
     passResetToken: String,
     passTokenExpire: Date,

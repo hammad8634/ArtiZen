@@ -9,6 +9,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 
 const adminRouter = require('./routes/adminRoute');
+const sellerRouter = require('./routes/sellerRoute');
+const buyerRouter = require('./routes/buyerRoute');
 
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
@@ -48,6 +50,8 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/buyer', buyerRouter);
+app.use('/api/v1/seller', sellerRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));

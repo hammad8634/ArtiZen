@@ -43,8 +43,8 @@ const adminSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin'],
-      default: 'admin',
+      enum: ['Admin'],
+      default: 'Admin',
     },
     passResetToken: String,
     passTokenExpire: Date,

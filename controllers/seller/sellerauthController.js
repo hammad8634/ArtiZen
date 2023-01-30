@@ -1,10 +1,11 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-const Admin = require('../models/adminModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const sendEmail = require('../utils/email');
+const Seller = require('../../models/sellerModel');
+const catchAsync = require('../../utils/catchAsync');
+const AppError = require('../../utils/appError');
+const sendEmail = require('../../utils/email');
+const Buyer = require('../../models/buyerModel');
 
 const signInToken = function (id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -40,11 +41,19 @@ const signInUser = (user, statuscode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await Admin.create({
+  const buyerCheck = await Buyer.findOne({
+    email: req.body.email,
+  });
+  if (buyerCheck)
+    return next(new AppError('This Email is already registered as Buyer', 400));
+
+  const newUser = await Seller.create({
     name: req.body.name,
     email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    cnic: req.body.cnic,
   });
 
   req.user = newUser;
@@ -59,24 +68,26 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   // let userlogin;
-  // let useremail;
-  // let phoneNumber;
-  const { email, password } = req.body;
+  let useremail;
+  let phoneNumber;
+  const { user, password } = req.body;
 
-  if (!email || !password) {
+  if (!user || !password) {
     // console.log('hi');
     return next(new AppError('Account or password is not entered', 400));
   }
 
-  // if (user.includes('@')) {
-  //   useremail = req.body.user;
-  // } else if (!user.includes('@')) {
-  //   phoneNumber = req.body.user;
-  // }
+  if (user.includes('@')) {
+    useremail = req.body.user;
+  } else if (!user.includes('@')) {
+    phoneNumber = req.body.user;
+  }
 
   // const user = await User.findOne({ email }).select('+password');
 
-  const user1 = await Admin.findOne({ email: email }).select('+password');
+  const user1 = await Seller.findOne({
+    $or: [{ email: useremail }, { phoneNumber: phoneNumber }],
+  }).select('+password');
 
   if (!user1 || !(await user1.correctPassword(password, user1.password))) {
     // console.log('hi');
@@ -113,7 +124,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  const currentUser = await Admin.findById(decoded.id);
+  const currentUser = await Seller.findById(decoded.id);
 
   if (!currentUser) {
     return next(
@@ -143,7 +154,7 @@ exports.restrictTo = function (...roles) {
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  const user = await Admin.findOne({ email: req.body.email });
+  const user = await Seller.findOne({ email: req.body.email });
 
   if (!user) {
     return next(
@@ -157,7 +168,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   const resetURL = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/admin/resetpassword/${resetToken}`;
+  )}/api/v1/seller/resetpassword/${resetToken}`;
 
   const message = `Forgot your password? submit patch request on the given link for the new password ${resetURL} \n If you dont do this please ignore this email`;
 
@@ -188,7 +199,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest('hex');
 
-  const user = await Admin.findOne({
+  const user = await Seller.findOne({
     passResetToken: hashedToken,
     passTokenExpire: { $gt: Date.now() },
   });
@@ -207,7 +218,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePass = catchAsync(async (req, res, next) => {
-  const user = await Admin.findById(req.user.id).select('+password');
+  const user = await Seller.findById(req.user.id).select('+password');
 
   if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
     return next(new AppError('Your current password is incorrect!', 401));
