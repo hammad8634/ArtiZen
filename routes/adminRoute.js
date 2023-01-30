@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/create', adminauthController.signup);
 
 router.route('/login').post(adminauthController.login);
+router.route('/resetpassword/:token').patch(adminauthController.resetPassword);
+router.route('/forgotpassword').post(adminauthController.forgotPassword);
 
 // router.patch('/emailconfirm/:token', authController.emailConfirm);
 

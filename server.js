@@ -5,6 +5,7 @@ dotenv.config({ path: './config.env' });
 const app = require('./app');
 
 const db = process.env.DATABASE;
+mongoose.set('strictQuery', true);
 
 mongoose
   .connect(db, {
