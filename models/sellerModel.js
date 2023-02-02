@@ -23,9 +23,18 @@ const sellerSchema = mongoose.Schema(
     phoneNumber: {
       type: String,
       // match: /^(\()?\d{3}(\))?(-|\s)?\d{7}$/,
-      length: [10, 'must have ==10 length'],
+      minlength: [11, 'must have length equal to 11'],
+      maxlength: [11, 'must have length equal to 11'],
       required: [true, 'Must have a phone number'],
       unique: [true, 'Phone number must not be used before'],
+    },
+
+    cnic: {
+      type: String,
+      // minlength: [13, 'must have greater or equal to 13 length'],
+      // maxlength: [13, 'must have less or equal to 13 length'],
+      required: [true, 'Must have a cnic number'],
+      unique: [true, 'Cnic number must not be used before'],
     },
 
     password: {
@@ -55,13 +64,6 @@ const sellerSchema = mongoose.Schema(
       type: String,
       enum: ['seller'],
       default: 'seller',
-    },
-
-    cnic: {
-      type: Number,
-      required: [true, 'Must have a cnic number'],
-      length: [13, 'must have ==13 length'],
-      unique: [true, 'Cnic number must not be used before'],
     },
 
     cnicPhotoFront: String,

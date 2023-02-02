@@ -31,6 +31,7 @@ const signInUser = (user, statuscode, res) => {
 
   res.status(statuscode).json({
     status: 'success',
+    // message: 'Password has been updated successfully',
     token,
     data: {
       name: user.name,
@@ -52,6 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await Buyer.create({
     name: req.body.name,
     email: req.body.email,
+    phoneNumber: req.body.phoneNumber,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
@@ -214,6 +216,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   signInUser(user, 201, res);
+  return next(new AppError('Password has been Updated', 401));
 });
 
 exports.updatePass = catchAsync(async (req, res, next) => {

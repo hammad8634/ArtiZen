@@ -46,6 +46,10 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
   if (buyerCheck)
     return next(new AppError('This Email is already registered as Buyer', 400));
+  const cnicLengthChecker = req.body.cnic;
+  // console.log(cnicLengthChecker.length);
+  if (cnicLengthChecker.toString().length !== 13)
+    return next(new AppError('Enter a invalid CNIC', 402));
 
   const newUser = await Seller.create({
     name: req.body.name,

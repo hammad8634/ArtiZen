@@ -18,6 +18,14 @@ const buyerSchema = mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Enter valid email'],
     },
+    phoneNumber: {
+      type: String,
+      // match: /^(\()?\d{3}(\))?(-|\s)?\d{7}$/,
+      minlength: [10, 'must have greater or equal to 10 length'],
+      maxlength: [11, 'must have less or equal to 11 length'],
+      required: [true, 'Must have a phone number'],
+      unique: [true, 'Phone number must not be used before'],
+    },
     password: {
       type: String,
       required: [true, 'Must have a password'],
