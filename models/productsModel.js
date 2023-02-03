@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const storeSchema = mongoose.Schema(
+const productSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -38,7 +38,7 @@ const storeSchema = mongoose.Schema(
   }
 );
 
-storeSchema.pre(/^find/, function (next) {
+productSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'owner',
     select: 'name',
@@ -46,6 +46,6 @@ storeSchema.pre(/^find/, function (next) {
   next();
 });
 
-const Store = mongoose.model('Store', storeSchema);
+const Product = mongoose.model('Product', productSchema);
 
-module.exports = Store;
+module.exports = Product;

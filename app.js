@@ -24,7 +24,7 @@ app.use(cors());
 
 app.options('*', cors());
 
-app.use(helmet());
+// app.use(helmet());
 
 // const limiter = rateLimit({
 //   max: 100,
@@ -32,9 +32,9 @@ app.use(helmet());
 //   message: ' To many requests to the API please try again after an hour',
 // });
 
-app.use(sanitize());
+// app.use(sanitize());
 
-app.use(xss());
+// app.use(xss());
 
 // app.use('/api', limiter);
 app.use(logger('dev'));
@@ -42,7 +42,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-app.use(compression());
+// app.use(compression());
 
 app.use((req, res, next) => {
   req.requestBody = new Date().toISOString();

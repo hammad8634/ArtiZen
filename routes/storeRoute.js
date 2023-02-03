@@ -11,4 +11,6 @@ router.post(
   storeController.createStore
 );
 
+router.get('/all', storeController.getallstores);
+
 module.exports = router;
