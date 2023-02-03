@@ -38,6 +38,12 @@ const storeSchema = mongoose.Schema(
   }
 );
 
+storeSchema.virtual('products', {
+  ref: 'Product',
+  foreignField: 'store',
+  localField: '_id',
+});
+
 storeSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'owner',

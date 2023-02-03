@@ -1,9 +1,9 @@
-const helmet = require('helmet');
+// const helmet = require('helmet');
 const logger = require('morgan');
-const sanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
+// const sanitize = require('express-mongo-sanitize');
+// const xss = require('xss-clean');
 // const rateLimit = require('express-rate-limit');
-const compression = require('compression');
+// const compression = require('compression');
 const cors = require('cors');
 const express = require('express');
 const dotenv = require('dotenv');
@@ -12,6 +12,7 @@ const adminRouter = require('./routes/adminRoute');
 const sellerRouter = require('./routes/sellerRoute');
 const buyerRouter = require('./routes/buyerRoute');
 const storeRouter = require('./routes/storeRoute');
+const productRouter = require('./routes/productRoute');
 
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
@@ -54,6 +55,7 @@ app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/buyer', buyerRouter);
 app.use('/api/v1/seller', sellerRouter);
 app.use('/api/v1/store', storeRouter);
+app.use('/api/v1/product', productRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));

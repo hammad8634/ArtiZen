@@ -1,5 +1,5 @@
 const express = require('express');
-const sellerController = require('../controllers/seller/sellerController');
+// const sellerController = require('../controllers/seller/sellerController');
 const sellerauthController = require('../controllers/seller/sellerauthController');
 const storeController = require('../controllers/store/stroreController');
 
@@ -12,5 +12,6 @@ router.post(
 );
 
 router.get('/all', storeController.getallstores);
+router.get('/one/:id', storeController.getonestore);
 
 module.exports = router;

@@ -1,14 +1,15 @@
 const Store = require('../../models/sellerStoreModel');
 const AppError = require('../../utils/appError');
-const Seller = require('../../models/sellerModel');
+// const Seller = require('../../models/sellerModel');
 const catchAsync = require('../../utils/catchAsync');
+const Factory = require('../factoryHandler');
 
 exports.createStore = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
 
   const prestore = await Store.findOne({ owner: { $eq: req.user.id } });
 
-  console.log(prestore);
+  // console.log(prestore);
 
   if (prestore)
     return next(
@@ -32,6 +33,8 @@ exports.getallstores = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'Success',
-    store: stores ? stores : `No Store Found`,
+    store: stores || `No Store Found`,
   });
 });
+
+exports.getonestore = Factory.getOne(Store, { path: 'products' });
