@@ -11,6 +11,7 @@ const dotenv = require('dotenv');
 const adminRouter = require('./routes/adminRoute');
 const sellerRouter = require('./routes/sellerRoute');
 const buyerRouter = require('./routes/buyerRoute');
+const storeRouter = require('./routes/storeRoute');
 
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
@@ -23,7 +24,7 @@ app.use(cors());
 
 app.options('*', cors());
 
-app.use(helmet());
+// app.use(helmet());
 
 // const limiter = rateLimit({
 //   max: 100,
@@ -31,9 +32,9 @@ app.use(helmet());
 //   message: ' To many requests to the API please try again after an hour',
 // });
 
-app.use(sanitize());
+// app.use(sanitize());
 
-app.use(xss());
+// app.use(xss());
 
 // app.use('/api', limiter);
 app.use(logger('dev'));
@@ -41,7 +42,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-app.use(compression());
+// app.use(compression());
 
 app.use((req, res, next) => {
   req.requestBody = new Date().toISOString();
@@ -52,6 +53,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/buyer', buyerRouter);
 app.use('/api/v1/seller', sellerRouter);
+app.use('/api/v1/store', storeRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));
