@@ -40,6 +40,16 @@ const signInUser = (user, statuscode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const preadmin = await Admin.find();
+
+  if (preadmin.length >= 2)
+    return next(
+      new AppError(
+        'Only 2 Admin Account can exist at once you cannot create anymore account',
+        400
+      )
+    );
+
   const newUser = await Admin.create({
     name: req.body.name,
     email: req.body.email,
@@ -97,7 +107,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
-  
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')

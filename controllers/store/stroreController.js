@@ -1,6 +1,7 @@
 const Store = require('../../models/sellerStoreModel');
 const AppError = require('../../utils/appError');
-// const Seller = require('../../models/sellerModel');
+const Product = require('../../models/productsModel');
+const Seller = require('../../models/sellerModel');
 const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
 
@@ -34,6 +35,27 @@ exports.getallstores = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'Success',
     store: stores || `No Store Found`,
+  });
+});
+
+exports.deleteStoreanditsProducts = catchAsync(async (req, res, next) => {
+  const prestore = await Store.findOne({ owner: req.user.id });
+
+  if (!prestore)
+    return next(
+      new AppError(
+        'You cannot delete this store. Only Owner can delete it!',
+        401
+      )
+    );
+
+  await Store.findByIdAndDelete(req.params.id);
+
+  await Product.deleteMany({ store: { $in: [req.params.id] } });
+
+  res.status(200).json({
+    Success: 'Success',
+    message: 'Store and Products Belonging to it Delete Successfully',
   });
 });
 

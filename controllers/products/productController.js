@@ -2,6 +2,7 @@ const Store = require('../../models/sellerStoreModel');
 const AppError = require('../../utils/appError');
 const Product = require('../../models/productsModel');
 const catchAsync = require('../../utils/catchAsync');
+const Factory = require('../factoryHandler');
 // const Seller = require('../../models/sellerModel');
 
 exports.createProduct = catchAsync(async (req, res, next) => {
@@ -59,3 +60,5 @@ exports.deleteProducts = catchAsync(async (req, res, next) => {
     );
   }
 });
+
+exports.getoneproduct = Factory.getOne(Product);

@@ -6,7 +6,19 @@ const router = express.Router();
 
 // router.route('/users').get(userController.getAllUsers);
 
-router.post('/create', adminauthController.signup);
+router.post('/create', adminauthController.protect, adminauthController.signup);
+
+router.delete(
+  '/delete/:id',
+  adminauthController.protect,
+  adminController.deleteAdmin
+);
+
+router.get(
+  'getalladmins',
+  adminauthController.protect,
+  adminController.getAllUsers
+);
 
 router.route('/login').post(adminauthController.login);
 router.route('/resetpassword/:token').patch(adminauthController.resetPassword);

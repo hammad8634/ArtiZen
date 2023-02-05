@@ -14,4 +14,11 @@ router.post(
 router.get('/all', storeController.getallstores);
 router.get('/one/:id', storeController.getonestore);
 
+router
+  .route('/deletestoreanditsproducts/:id')
+  .delete(
+    sellerauthController.protect,
+    storeController.deleteStoreanditsProducts
+  );
+
 module.exports = router;
