@@ -1,5 +1,5 @@
 const Store = require('../../models/sellerStoreModel');
-// const AppError = require('../../utils/appError');
+const AppError = require('../../utils/appError');
 const Product = require('../../models/productsModel');
 const catchAsync = require('../../utils/catchAsync');
 // const Seller = require('../../models/sellerModel');
@@ -27,4 +27,35 @@ exports.getallproducts = catchAsync(async (req, res, next) => {
     status: 'Success',
     product: products || `No Product Found`,
   });
+});
+
+exports.updateProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.updateOne(
+    { _id: req.params.id },
+    { $set: req.body }
+  );
+  if (products) {
+    res.status(200).json({
+      status: 'success',
+      message: 'Product updated successfully',
+    });
+  } else {
+    return next(
+      new AppError("Can't Update product. As No Product found with such id")
+    );
+  }
+});
+
+exports.deleteProducts = catchAsync(async (req, res, next) => {
+  const products = await Product.findByIdAndDelete(req.params.id);
+  if (products) {
+    res.status(200).json({
+      status: 'success',
+      message: 'Product deleted successfully',
+    });
+  } else {
+    return next(
+      new AppError("Can't Delete Product. As No Product found with such id")
+    );
+  }
 });
