@@ -12,8 +12,11 @@ const productSchema = mongoose.Schema(
     photos: { type: [String], required: [true, 'must have photos'] },
     video: { type: String, required: [true, 'must have video'] },
     category: { type: String, required: [true, 'must have category'] },
-    subcategory: { type: [String], required: [true, 'must have subcategory'] },
-
+    subcategory: {
+      type: [String],
+      required: [true, 'must have subcategory'],
+    },
+    quantity: { type: Number, required: [true, 'must have quantity'] },
     ratingAvg: {
       type: Number,
       default: 4.3,
@@ -34,7 +37,10 @@ const productSchema = mongoose.Schema(
       discountedPrice: Number,
     },
 
-    Description: { type: String, required: [true, 'must have Description'] },
+    Description: {
+      type: String,
+      required: [true, 'must have Description'],
+    },
 
     owner: {
       type: mongoose.Schema.ObjectId,
@@ -55,6 +61,7 @@ const productSchema = mongoose.Schema(
       default: Date.now(),
     },
   },
+
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

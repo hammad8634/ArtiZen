@@ -55,6 +55,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    isVerified: true,
   });
 
   req.user = newUser;
@@ -215,7 +216,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   signInUser(user, 201, res);
 });
-
 exports.updatePass = catchAsync(async (req, res, next) => {
   const user = await Admin.findById(req.user.id).select('+password');
 

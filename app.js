@@ -13,6 +13,8 @@ const sellerRouter = require('./routes/sellerRoute');
 const buyerRouter = require('./routes/buyerRoute');
 const storeRouter = require('./routes/storeRoute');
 const productRouter = require('./routes/productRoute');
+const cartRouter = require('./routes/cartRoute');
+const wishlistRouter = require('./routes/wishlistRoute');
 
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
@@ -56,6 +58,8 @@ app.use('/api/v1/buyer', buyerRouter);
 app.use('/api/v1/seller', sellerRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/product', productRouter);
+app.use('/api/v1/cart', cartRouter);
+app.use('/api/v1/wishlist', wishlistRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));

@@ -1,7 +1,7 @@
 const Store = require('../../models/sellerStoreModel');
 const AppError = require('../../utils/appError');
 const Product = require('../../models/productsModel');
-const Seller = require('../../models/sellerModel');
+// const Seller = require('../../models/sellerModel');
 const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
 

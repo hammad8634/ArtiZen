@@ -31,4 +31,5 @@ router
   .route('/profile')
   .get(buyerauthController.protect, buyerController.getProfile);
 
+// router.get('/profile', buyerController.getProfile);
 module.exports = router;
