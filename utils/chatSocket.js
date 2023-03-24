@@ -11,13 +11,13 @@ module.exports = (io) => {
 
         // console.log(`Client: ${chat.client} and usedId: ${userId}`);
 
-        if (chat.client.id === userId) {
-          chat.clientisSeen = true;
+        if (chat.seller.id === userId) {
+          chat.sellerisSeen = true;
           // console.log('seen by client');
         }
 
-        if (chat.accountmanager.id === userId) {
-          chat.managerisSeen = true;
+        if (chat.buyer.id === userId) {
+          chat.buyerisSeen = true;
           // console.log('seen by manager');
         }
 
@@ -40,15 +40,15 @@ module.exports = (io) => {
         // Find the chat associated with the client and account manager
         const chat = await Chat.findById(chatId);
 
-        if (chat.client.id === userId) {
-          chat.managerisSeen = false;
-          name = chat.client.name;
+        if (chat.seller.id === userId) {
+          chat.buyerisSeen = false;
+          name = chat.seller.name;
           // console.log('seen by client');
         }
 
-        if (chat.accountmanager.id === userId) {
-          chat.clientisSeen = false;
-          name = chat.accountmanager.name;
+        if (chat.buyer.id === userId) {
+          chat.sellerisSeen = false;
+          name = chat.buyer.name;
           // console.log('seen by manager');
         }
 
@@ -56,6 +56,7 @@ module.exports = (io) => {
         chat.messages.push({
           name: name,
           message: message,
+          senderId: userId,
           createdAt: new Date(),
         });
 
@@ -66,6 +67,7 @@ module.exports = (io) => {
         const messagelatest = {
           name: name,
           message: message,
+          senderId: userId,
           createdAt: new Date(),
         };
         // Send the message to all clients in the chat room
