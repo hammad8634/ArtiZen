@@ -65,7 +65,7 @@ exports.createcart = catchAsync(async (req, res, next) => {
         { _id: cart._id, 'products.productId': productId },
         { $set: { 'products.$.quantity ': updatedQuantity } }
       );
-      // console.log('body incrementing ---- :', increment);
+      console.log('body incrementing ---- :', increment);
     }
     const carts = await Cart.findOneAndUpdate(
       { id: cart._id },
