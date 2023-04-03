@@ -17,15 +17,17 @@ const productSchema = mongoose.Schema(
       required: [true, 'must have subcategory'],
     },
     quantity: { type: Number, required: [true, 'must have quantity'] },
-    ratingAvg: {
+    ratingsAverage: {
       type: Number,
-      default: 4.3,
+      default: 4.5,
+      min: [1, 'must have rating above or equal 1'],
+      max: [5, 'must have rating below or equal 5'],
+      set: (val) => Math.round(val * 10) / 10,
     },
-    ratingTotal: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
-
     soldItems: {
       type: Number,
       required: [true, 'must have number of sold items'],
@@ -67,6 +69,19 @@ const productSchema = mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+productSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'product',
+  localField: '_id',
+});
+
+productSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'reviews',
+  });
+  next();
+});
 
 productSchema.pre(/^find/, function (next) {
   this.populate({
