@@ -1,4 +1,5 @@
 const Order = require('../../models/orderModel');
+const Product = require('../../models/productsModel');
 const AppError = require('../../utils/appError');
 const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
@@ -7,12 +8,27 @@ const OrderProduct = require('../../models/orderProductsModel');
 exports.createOrder = catchAsync(async (req, res, next) => {
   const { products, totalAmount } = req.body;
   const user = req.user.id;
+
+  if (!req.paid) {
+    return next(new AppError('Payment Failed', 404));
+  }
+
   const order = new Order({ user, products, totalAmount });
   await order.save();
 
-  const productss = products.map(async (singleSellerProduct) => {
-    const prod = await OrderProduct.create({});
-  });
+  const productss = await Promise.all(
+    products.map(async (product) => {
+      const preprod = await Product.findById(product.product);
+      const prod = await OrderProduct.create({
+        user: req.user.id,
+        seller: product.owner,
+        order: order.id,
+        orderno: order.orderno,
+        quantity: product.quantity,
+        productPrice: product.productPrice,
+      });
+    })
+  );
 
   res.status(201).json({
     status: 'Success',
