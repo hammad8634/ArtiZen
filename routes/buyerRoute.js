@@ -4,7 +4,7 @@ const buyerauthController = require('../controllers/buyer/buyerauthController');
 
 const router = express.Router();
 
-// router.route('/users').get(userController.getAllUsers);
+router.route('/all').get(buyerController.getAllUsers);
 
 router.post('/create', buyerauthController.signup);
 

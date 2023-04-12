@@ -4,7 +4,7 @@ const sellerauthController = require('../controllers/seller/sellerauthController
 
 const router = express.Router();
 
-// router.route('/users').get(userController.getAllUsers);
+router.route('/all').get(sellerController.getAllUsers);
 
 router.post('/create', sellerauthController.signup);
 

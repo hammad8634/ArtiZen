@@ -19,6 +19,7 @@ const reviewRouter = require('./routes/reviewRoute');
 const orderRouter = require('./routes/orderRoute');
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
+const chatRouter = require('./routes/chatRoute');
 
 dotenv.config({ path: './config.env' });
 
@@ -63,6 +64,7 @@ app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/wishlist', wishlistRouter);
 app.use('/api/v1/review', reviewRouter);
 app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/chat', chatRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));

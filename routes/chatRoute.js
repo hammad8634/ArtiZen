@@ -45,3 +45,5 @@ router.get(
   ChatController.buyerSeen,
   ChatController.getChatbyId
 );
+
+module.exports = router;

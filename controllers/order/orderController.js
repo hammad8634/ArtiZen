@@ -16,19 +16,19 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   const order = new Order({ user, products, totalAmount });
   await order.save();
 
-  const productss = await Promise.all(
-    products.map(async (product) => {
-      const preprod = await Product.findById(product.product);
-      const prod = await OrderProduct.create({
-        user: req.user.id,
-        seller: product.owner,
-        order: order.id,
-        orderno: order.orderno,
-        quantity: product.quantity,
-        productPrice: product.productPrice,
-      });
-    })
-  );
+  // const productss = await Promise.all(
+  //   products.map(async (product) => {
+  //     const preprod = await Product.findById(product.product);
+  //     const prod = await OrderProduct.create({
+  //       user: req.user.id,
+  //       seller: product.owner,
+  //       order: order.id,
+  //       orderno: order.orderno,
+  //       quantity: product.quantity,
+  //       productPrice: product.productPrice,
+  //     });
+  //   })
+  // );
 
   res.status(201).json({
     status: 'Success',

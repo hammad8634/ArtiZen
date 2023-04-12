@@ -1,11 +1,12 @@
+/* eslint-disable no-console */
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
-const app = require('./app');
 
 const http = require('http');
 const { Server } = require('socket.io');
+const app = require('./app');
 
 const db = process.env.DATABASE;
 mongoose.set('strictQuery', true);
@@ -25,6 +26,7 @@ const io = new Server(server, {});
 
 console.log(`Server is Running in ${process.env.NODE_ENV} mode`);
 
+// eslint-disable-next-line no-unused-vars
 const server1 = server.listen(port, () => {
   console.log(`Server is listening on Port ${port}`);
 });
