@@ -3,7 +3,12 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // Create a payment method using a credit card
 exports.payment = async (req, res, next) => {
   let paymentIntent;
-  const amount = req.body.totalAmount * 100; // in cents
+  const amount =
+    req.body.products.reduce(
+      (totalPrice, product) =>
+        totalPrice + product.quantity * product.productPrice,
+      0
+    ) * 100; // in cents
 
   try {
     // Create payment method

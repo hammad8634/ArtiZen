@@ -43,8 +43,8 @@ const adminSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['Admin'],
-      default: 'Admin',
+      enum: ['admin'],
+      default: 'admin',
     },
     passResetToken: String,
     passTokenExpire: Date,
@@ -113,6 +113,6 @@ adminSchema.methods.passwordResetToken = function () {
   return ResetToken;
 };
 
-const Admin = mongoose.model('Admin', adminSchema);
+const Admin = mongoose.model('admin', adminSchema);
 
 module.exports = Admin;

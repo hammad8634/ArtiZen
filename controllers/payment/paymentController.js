@@ -39,26 +39,3 @@ exports.payment = async (req, res, next) => {
     return res.status(500).send({ error: 'Payment failed' });
   }
 };
-
-// exports.refund = catchAsync(async (req, res, next) => {
-//   // Refund payment if requested
-//   const amount = req.amount * 100;
-//   const id = req.payementId;
-//   // console.log("Payment Id:", id);
-//   // const order = req.order;
-//   const servicebooked = req.servicebooked;
-
-//   try {
-//     const refund = await stripe.refunds.create({
-//       payment_intent: id,
-//       amount,
-//     });
-//     console.log('Refund succeeded:', refund);
-//     // await order.save({ validateBeforeSave: false });
-//     await servicebooked.save({ validateBeforeSave: false });
-//     return res.status(200).send({ message: 'Refund succeeded' });
-//   } catch (error) {
-//     // console.log("Refund failed:", error);
-//     return res.status(500).send({ error: 'Refund failed' });
-//   }
-// });

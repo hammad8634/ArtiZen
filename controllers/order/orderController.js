@@ -14,6 +14,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   }
 
   const order = new Order({ user, products, totalAmount });
+  order.paymentStatus = 'Done';
   await order.save();
 
   // const productss = await Promise.all(

@@ -15,11 +15,11 @@ router.post(
 );
 router.get('/all', orderController.getAllOrders);
 router.patch(
-  '/update/:Id',
+  '/update/:id',
   sellerauthController.protect,
   sellerauthController.restrictTo('seller'),
   orderController.updateOrderStatus
 );
-router.delete('/delete/:Id', orderController.deleteOrders);
+router.delete('/delete/:id', orderController.deleteOrders);
 
 module.exports = router;

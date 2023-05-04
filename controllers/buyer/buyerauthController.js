@@ -72,17 +72,17 @@ exports.login = catchAsync(async (req, res, next) => {
   // let userlogin;
   let useremail;
   let phoneNumber;
-  const { user, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!user || !password) {
+  if (!email || !password) {
     // console.log('hi');
     return next(new AppError('Account or password is not entered', 400));
   }
 
-  if (user.includes('@')) {
-    useremail = req.body.user;
-  } else if (!user.includes('@')) {
-    phoneNumber = req.body.user;
+  if (email.includes('@')) {
+    useremail = req.body.email;
+  } else if (!email.includes('@')) {
+    phoneNumber = req.body.email;
   }
 
   // const user = await User.findOne({ email }).select('+password');

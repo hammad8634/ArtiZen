@@ -38,7 +38,7 @@ describe('API Tests', () => {
     it('Admin SignUp Form (Should not create other admin, because first admin is not login.', async () => {
       const user = {
         name: 'Hammad Mukhtar',
-        email: 'hammadAdmin2@gmail.com',
+        user: 'hammadAdmin2@gmail.com',
         password: 'admin321',
         passwordConfirm: 'admin321',
       };

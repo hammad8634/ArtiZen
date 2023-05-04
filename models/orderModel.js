@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Buyer',
       required: true,
     },
     products: [
@@ -18,20 +18,27 @@ const orderSchema = new mongoose.Schema(
         productPrice: { type: Number, required: true },
       },
     ],
-    totalAmount: { type: Number, required: true },
+    // totalAmount: { type: Number, required: true },
     orderno: {
       type: String,
       unique: true,
-      default: `Order: ${new Array(4)
-        .fill(0)
-        // eslint-disable-next-line no-unused-vars
-        .map((_) => Math.floor(Math.random() * 10))
-        .join('')}`,
+      default: function () {
+        return `${new Array(4)
+          .fill(0)
+          .map((_) => Math.floor(Math.random() * 10))
+          .join('')}`;
+      },
     },
     status: {
       type: String,
-      enum: ['pending', 'shipped', 'delivered'],
-      default: 'pending',
+      enum: ['Pending', 'Shipped', 'Delivered'],
+      default: 'Pending',
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ['Done', 'Pending'],
+      default: 'Pending',
     },
   },
   { timestamps: true }
