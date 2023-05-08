@@ -9,16 +9,20 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
   // req.body.name = req.user.name;
 
-  const store = await Store.findOne({ owner: { $eq: req.user.id } });
+  try {
+    const store = await Store.findOne({ owner: { $eq: req.user.id } });
 
-  req.body.store = store.id;
-  const product = await Product.create(req.body);
+    req.body.store = store.id;
+    const product = await Product.create(req.body);
 
-  res.status(201).json({
-    status: 'Success',
-    message: 'Product Created!',
-    product,
-  });
+    res.status(201).json({
+      status: 'Success',
+      message: 'Product Created!',
+      product,
+    });
+  } catch (err) {
+    res.status(501).send({ message: err?.message });
+  }
 });
 
 exports.getallproducts = catchAsync(async (req, res, next) => {

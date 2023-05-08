@@ -12,7 +12,6 @@ router
   .route('/create/:id')
   .post(reviewController.setProductUser, reviewController.createReview);
 
-router.route('/').get(reviewController.getAllReviews);
 
 router
   .route('/:id')

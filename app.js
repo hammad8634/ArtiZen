@@ -68,6 +68,7 @@ app.use('/api/v1/buyer', buyerRouter);
 app.use('/api/v1/seller', sellerRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/product', productRouter);
+
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/wishlist', wishlistRouter);
 app.use('/api/v1/review', reviewRouter);
