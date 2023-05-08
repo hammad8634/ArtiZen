@@ -35,7 +35,7 @@ app.options('*', cors());
 
 // app.use(helmet());
 
-// const limiter = rateLimit({
+// const limiter = heroku logs --tail({
 //   max: 100,
 //   windowMS: 60 * 60 * 1000,
 //   message: ' To many requests to the API please try again after an hour',
