@@ -20,12 +20,14 @@ const orderRouter = require('./routes/orderRoute');
 const AppError = require('./utils/appError');
 const globalErrHandler = require('./controllers/errorController');
 const chatRouter = require('./routes/chatRoute');
-app.get('/hello-world',function(req, res, next) {
-  res.send({message:"your project is working successfully!"});
-});
+
 dotenv.config({ path: './config.env' });
 
 const app = express();
+
+app.get('/hello-world', function (req, res, next) {
+  res.send({ message: 'your project is working successfully!' });
+});
 
 app.use(cors());
 
