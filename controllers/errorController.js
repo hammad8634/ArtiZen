@@ -57,7 +57,6 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'failed';
 
-  
   if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
     if (error.name === 'CastError') error = handleCastError(error);
@@ -68,7 +67,7 @@ module.exports = (err, req, res, next) => {
       error = handlesJWTErrorExpired(error);
 
     errorProd(error, res);
-  } else{
+  } else {
     errorDev(err, res);
   }
 };

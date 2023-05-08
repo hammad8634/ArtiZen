@@ -11,7 +11,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
   try {
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
-
     req.body.store = store.id;
     const product = await Product.create(req.body);
 

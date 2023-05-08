@@ -33,7 +33,7 @@ exports.createOrder = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     status: 'Success',
-    message: 'Product Created!',
+    message: 'Product Order Created!',
     order,
   });
 });

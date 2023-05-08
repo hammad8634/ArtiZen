@@ -6,7 +6,7 @@ const cartSchema = mongoose.Schema(
     productName: {
       type: String,
       // required: [true, 'Must have name of Product'],
-      unique: [true, 'Name must not be used before'],
+      // unique: [true, 'Name must not be used before'],
     },
 
     productId: {
