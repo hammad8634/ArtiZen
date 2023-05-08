@@ -8,12 +8,13 @@ const OrderProduct = require('../../models/orderProductsModel');
 exports.createOrder = catchAsync(async (req, res, next) => {
   const { products, totalAmount } = req.body;
   const user = req.user.id;
+  const location = req.body.location;
 
   if (!req.paid) {
     return next(new AppError('Payment Failed', 404));
   }
 
-  const order = new Order({ user, products, totalAmount });
+  const order = new Order({ user, products, totalAmount, location });
   order.paymentStatus = 'Done';
   await order.save();
 

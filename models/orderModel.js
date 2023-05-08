@@ -29,6 +29,18 @@ const orderSchema = new mongoose.Schema(
           .join('')}`;
       },
     },
+
+    location: {
+      coordinates: [Number],
+      cityName: {
+        type: String,
+        required: [true, 'Must have name of city'],
+      },
+      address: {
+        type: String,
+        required: [true, 'must enter location name'],
+      },
+    },
     status: {
       type: String,
       enum: ['Pending', 'Shipped', 'Delivered'],

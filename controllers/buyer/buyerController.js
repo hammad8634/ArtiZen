@@ -33,3 +33,12 @@ exports.getProfile = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteBuyer = catchAsync(async (req, res, next) => {
+  await Buyer.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Deleted Successfully',
+  });
+});

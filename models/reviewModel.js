@@ -6,7 +6,7 @@ const reviewSchema = new mongoose.Schema(
   {
     review: {
       type: String,
-      required: [true, 'cant be empty'],
+      required: [true, "can't be empty"],
     },
     rating: {
       type: Number,
@@ -17,20 +17,17 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    product: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Product',
-        required: [true, 'Must belong to Product'],
-      },
-    ],
-    user: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Buyer',
-        required: [true, 'Must belong to user'],
-      },
-    ],
+    product: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Product',
+      required: [true, 'Must belong to Product'],
+    },
+
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Buyer',
+      required: [true, 'Must belong to user'],
+    },
   },
   {
     toJSON: { virtuals: true },
