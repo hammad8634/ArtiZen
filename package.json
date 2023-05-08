@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
+    "dev": "nodemon server.js",
     "start:prod": "SET NODE_ENV=production & nodemon server.js",
+    "deploy": "git push heroku main",
     "debug": "ndb server.js",
     "test": "jest "
   },

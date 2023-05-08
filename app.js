@@ -1,9 +1,4 @@
-// const helmet = require('helmet');
 const logger = require('morgan');
-// const sanitize = require('express-mongo-sanitize');
-// const xss = require('xss-clean');
-// const rateLimit = require('express-rate-limit');
-// const compression = require('compression');
 const cors = require('cors');
 const express = require('express');
 const dotenv = require('dotenv');
@@ -31,31 +26,16 @@ app.get('/hello-world', function (req, res, next) {
 
 app.use(cors());
 
-app.get('/hello-world',function(req, res, next) {
-  res.send({message:"your project is working successfully!"});
+app.get('/hello-world', function (req, res, next) {
+  res.send({ message: 'your project is working successfully!' });
 });
 
 app.options('*', cors());
 
-// app.use(helmet());
-
-// const limiter = heroku logs --tail({
-//   max: 100,
-//   windowMS: 60 * 60 * 1000,
-//   message: ' To many requests to the API please try again after an hour',
-// });
-
-// app.use(sanitize());
-
-// app.use(xss());
-
-// app.use('/api', limiter);
 app.use(logger('dev'));
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
-
-// app.use(compression());
 
 app.use((req, res, next) => {
   req.requestBody = new Date().toISOString();

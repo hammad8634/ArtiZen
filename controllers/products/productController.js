@@ -21,7 +21,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       product,
     });
   } catch (err) {
-    res.status(501).send({ message: err?.message });
+    res.status(401).send({ message: err?.message });
   }
 });
 

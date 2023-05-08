@@ -14,30 +14,33 @@ const signInToken = function (id) {
 };
 
 const signInUser = (user, statuscode, res) => {
-  const token = signInToken(user._id);
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.EXPIRES_COOKIE_IN * 24 * 60 * 60 * 1000
-    ),
+  try {
+    const token = signInToken(user._id);
+    const cookieOptions = {
+      expires: new Date(
+        Date.now() + process.env.EXPIRES_COOKIE_IN * 24 * 60 * 60 * 1000
+      ),
 
-    httpOnly: true,
-  };
+      httpOnly: true,
+    };
+    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+    res.cookie('jwt', token, cookieOptions);
 
-  res.cookie('jwt', token, cookieOptions);
+    user.password = undefined;
 
-  user.password = undefined;
-
-  res.status(statuscode).json({
-    status: 'success',
-    token,
-    data: {
-      name: user.name,
-      role: user.role,
-      status: user.isVerified,
-    },
-  });
+    res.status(statuscode).json({
+      status: 'success',
+      token,
+      data: {
+        name: user.name,
+        role: user.role,
+        status: user.isVerified,
+      },
+    });
+  } catch (err) {
+    res.status(401).send({ message: err?.message });
+  }
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
