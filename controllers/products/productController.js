@@ -3,41 +3,48 @@ const AppError = require('../../utils/appError');
 const Product = require('../../models/productsModel');
 const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
+const axios = require('axios').default;
+
 // const Seller = require('../../models/sellerModel');
 
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
-  // req.body.name = req.user.name;
 
   const { productName, Description } = req.body;
 
-  // try {
-  //   const moderationResponse = await axios.post('http://127.0.0.1:8000/v1/moderate', {
-  //     "title":productName,
-  //     "text":Description,
-  //   });
-  //   console.log(`Product name is: ${productName} and description is: ${description}`);
-
-  //   if (moderationResponse.data.inappropriate) {
-  //     return res.status(406).json({
-  //       status: 'Error',
-  //       message: 'The product contains inappropriate content.',
-  //     });
-  //   }
-
   try {
+    const moderationResponse = await axios.post(
+      'http://35.223.95.232:8080/v1/moderate',
+      {
+        title: productName,
+        text: Description,
+      }
+    );
+    console.log(`Moderation Response 1 : ${moderationResponse}`);
+    console.log('Success 1');
+
+    if (moderationResponse.data.inappropriate) {
+      return res.status(406).json({
+        status: 'Error',
+        message: 'The product contains inappropriate content.',
+      });
+    }
+
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
     req.body.store = store.id;
     const product = await Product.create(req.body);
 
     axios
-
-      .post('http://127.0.0.1:8000/v1/update_product_model', {
-        productId: product.id,
-        console: console.log(`New added product is : ${productId}`),
+      .post('http://35.223.95.232:8080/v1/update-product-model', {
+        product_id: product.id,
+      })
+      .then(() => {
+        console.log(`Product id sent is: ${product.id}`);
       })
       .catch((error) => {
-        console.log('Failed to send the newly created product ID:', error);
+        console.log(
+          `Failed to send the newly created product ID:, ${error}\n and Product Id; ${product.id}`
+        );
       });
 
     res.status(201).json({
@@ -45,9 +52,11 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       message: 'Product Created!',
       product,
     });
-    console.log('Producted created successfully..........................');
+    console.log('Product created successfully.');
   } catch (err) {
-    res.status(401).send({ message: err?.message });
+    return res.status(401).send({
+      message: `Error message for create product end is: ${err?.message}`,
+    });
   }
 });
 

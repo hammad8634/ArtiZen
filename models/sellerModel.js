@@ -71,7 +71,7 @@ const sellerSchema = mongoose.Schema(
 
     cnicConfirm: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     passResetToken: String,
     passTokenExpire: Date,
