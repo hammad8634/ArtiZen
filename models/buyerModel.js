@@ -48,6 +48,11 @@ const buyerSchema = mongoose.Schema(
         type: String,
         required: [true, 'Must have name of city'],
       },
+      province: {
+        type: String,
+        enum: ['Buyer'],
+        default: 'Buyer',
+      },
       address: {
         type: String,
         required: [true, 'must enter location name'],

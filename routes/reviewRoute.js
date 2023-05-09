@@ -12,11 +12,11 @@ router
   .route('/create/:id')
   .post(reviewController.setProductUser, reviewController.createReview);
 
-
 router
   .route('/:id')
   .get(reviewController.getReview)
   .delete(reviewController.deleteReview)
   .patch(reviewController.updateReview);
 
+router.route('all').get(reviewController.getAllReviews);
 module.exports = router;

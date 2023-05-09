@@ -20,15 +20,7 @@ dotenv.config({ path: './config.env' });
 
 const app = express();
 
-app.get('/hello-world', function (req, res, next) {
-  res.send({ message: 'your project is working successfully!' });
-});
-
 app.use(cors());
-
-app.get('/hello-world', function (req, res, next) {
-  res.send({ message: 'your project is working successfully!' });
-});
 
 app.options('*', cors());
 

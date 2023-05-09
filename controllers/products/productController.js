@@ -9,16 +9,43 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
   // req.body.name = req.user.name;
 
+  const { productName, Description } = req.body;
+
+  // try {
+  //   const moderationResponse = await axios.post('http://127.0.0.1:8000/v1/moderate', {
+  //     "title":productName,
+  //     "text":Description,
+  //   });
+  //   console.log(`Product name is: ${productName} and description is: ${description}`);
+
+  //   if (moderationResponse.data.inappropriate) {
+  //     return res.status(406).json({
+  //       status: 'Error',
+  //       message: 'The product contains inappropriate content.',
+  //     });
+  //   }
+
   try {
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
     req.body.store = store.id;
     const product = await Product.create(req.body);
+
+    axios
+
+      .post('http://127.0.0.1:8000/v1/update_product_model', {
+        productId: product.id,
+        console: console.log(`New added product is : ${productId}`),
+      })
+      .catch((error) => {
+        console.log('Failed to send the newly created product ID:', error);
+      });
 
     res.status(201).json({
       status: 'Success',
       message: 'Product Created!',
       product,
     });
+    console.log('Producted created successfully..........................');
   } catch (err) {
     res.status(401).send({ message: err?.message });
   }
