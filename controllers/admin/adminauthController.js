@@ -35,6 +35,7 @@ const signInUser = (user, statuscode, res) => {
       name: user.name,
       role: user.role,
       status: user.isVerified,
+      _id: user._id,
     },
   });
 };

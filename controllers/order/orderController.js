@@ -51,6 +51,17 @@ exports.getAllOrders = catchAsync(async (req, res, next) => {
   });
 });
 
+// Get all orders
+exports.getSellerOrders = catchAsync(async (req, res, next) => {
+  const orders = await Order.find({ seller: req.user.id })
+    .populate('user', 'name email')
+    .populate('products.product', 'name price');
+  res.status(200).json({
+    status: 'Success',
+    order: orders || `No Product Found`,
+  });
+});
+
 // Update order status By Seller
 exports.updateOrderStatus = catchAsync(async (req, res, next) => {
   const { orderId, status } = req.body;

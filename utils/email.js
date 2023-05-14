@@ -12,8 +12,8 @@ const sendMail = async (options) => {
     service: 'gmail',
     secure: false,
     auth: {
-      user: 'mindcrackerjigar@gmail.com',
-      pass: 'mkuopxpmhsbhoqsy',
+      user: 'jeehammad840@gmail.com',
+      pass: 'khlovqphnxfnktze',
     },
     tls: {
       rejectUnauthorized: false,
@@ -22,7 +22,7 @@ const sendMail = async (options) => {
 
   // mail options
   const mailOptions = {
-    from: 'Hammad <massab@massab.io>',
+    from: 'Artizen <hammad840@gmail.com>',
     to: options.email,
     subject: options.subject,
     text: options.message,

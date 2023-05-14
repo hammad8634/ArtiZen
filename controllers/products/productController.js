@@ -3,6 +3,7 @@ const AppError = require('../../utils/appError');
 const Product = require('../../models/productsModel');
 const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
+const OrderProduct = require('../../models/orderProductsModel');
 const axios = require('axios').default;
 
 // const Seller = require('../../models/sellerModel');
@@ -10,42 +11,80 @@ const axios = require('axios').default;
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
 
-  const { productName, Description } = req.body;
+  // const { productName, description } = req.body;
 
   try {
-    const moderationResponse = await axios.post(
-      'http://35.223.95.232:8080/v1/moderate',
-      {
-        title: productName,
-        text: Description,
-      }
-    );
-    console.log(`Moderation Response 1 : ${moderationResponse}`);
-    console.log('Success 1');
+    const store = await Store.findOne({ owner: { $eq: req.user.id } });
+    req.body.store = store.id;
+    const {
+      productName,
+      description,
+      video,
+      category,
+      quantity,
+      originalPrice,
+      salePrice,
+      colors,
+    } = req.body;
+    //   const moderationResponse = await axios.post(
+    //     'http://35.223.95.232:8080/v1/moderate',
+    //     {
+    //       title: productName,
+    //       text: description,
+    //     }
+    //   );
+    //   console.log(
+    //     `Moderation Response 1 : ${moderationResponse.data.inappropriate}`
+    //   );
+    //   console.log('Success 1');
 
-    if (moderationResponse.data.inappropriate) {
-      return res.status(406).json({
+    // if (moderationResponse.data.inappropriate) {
+    //   return res.status(406).json({
+    //     status: 'Error',
+    //     message: 'The product contains inappropriate content.',
+    //   });
+    // }
+
+    // Check if an image file was uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
         status: 'Error',
-        message: 'The product contains inappropriate content.',
+        message: 'Product images are required',
       });
     }
 
-    const store = await Store.findOne({ owner: { $eq: req.user.id } });
-    req.body.store = store.id;
-    const product = await Product.create(req.body);
+    // Get the filename of the uploaded image
+    const productImages = req.files.map(
+      (file) => `http://localhost:8000/uploads/${file.filename}`
+    );
 
-    axios
-      .post('http://35.223.95.232:8080/v1/update-product-model', {
-        product_id: product.id,
-      })
-      .then(() => {
-        console.log(`Product id sent is: ${product.id}`);
-      })
-      .catch((error) => {
-        console.log(
-          `Failed to send the newly created product ID:, ${error}\n and Product Id; ${product.id}`
-        );
-      });
+    // Save other product details to the database
+    const product = await Product.create({
+      owner: req.body.owner,
+      store: req.body.store,
+      productName,
+      description,
+      productImages,
+      video,
+      category,
+      quantity,
+      originalPrice,
+      salePrice,
+      colors,
+      description,
+    });
+    // axios
+    //   .post('http://35.223.95.232:8080/v1/update-product-model', {
+    //     product_id: product.id,
+    //   })
+    //   .then(() => {
+    //     console.log(`Product id sent is: ${product.id}`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(
+    //       `Failed to send the newly created product ID:, ${error}\n and Product Id; ${product.id}`
+    //     );
+    //   });
 
     res.status(201).json({
       status: 'Success',
@@ -67,6 +106,25 @@ exports.getallproducts = catchAsync(async (req, res, next) => {
     status: 'Success',
     product: products || `No Product Found`,
   });
+});
+
+exports.getallsellerproducts = catchAsync(async (req, res, next) => {
+  try {
+    const products = await Product.find({ owner: req.user._id });
+
+    res.status(200).json({
+      status: 'Success',
+      product: products || `No Product Found`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error',
+      message: 'An error occurred while retrieving products.',
+      error: console.log(
+        `Can't get product for this seller. Error is: ${error.message}`
+      ),
+    });
+  }
 });
 
 exports.updateProducts = catchAsync(async (req, res, next) => {

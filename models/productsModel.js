@@ -9,12 +9,15 @@ const productSchema = mongoose.Schema(
       // unique: [true, 'Name must not be used before'],
     },
 
-    photos: { type: [String], required: [true, 'must have photos'] },
+    productImages: {
+      type: [String],
+      required: [true, 'must have productImages'],
+    },
     video: { type: String, required: [true, 'must have video'] },
     category: { type: String, required: [true, 'must have category'] },
-    subcategory: {
+    colors: {
       type: [String],
-      required: [true, 'must have subcategory'],
+      required: [true, 'must have color'],
     },
     quantity: { type: Number, required: [true, 'must have quantity'] },
     ratingsAverage: {
@@ -28,18 +31,20 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    soldItems: {
-      type: Number,
-      required: [true, 'must have number of sold items'],
-    },
-    originalPrice: { type: Number, required: [true, 'must have price'] },
-
     salePrice: {
-      discountedPercentage: Number,
-      discountedPrice: Number,
+      type: Number,
+      required: [true, 'must have number of sale price'],
+    },
+    originalPrice: {
+      type: Number,
+      required: [true, 'must have original price'],
+    },
+    salePrice: {
+      type: Number,
+      required: [true, 'must have number of sale price'],
     },
 
-    Description: {
+    description: {
       type: String,
       required: [true, 'must have Description'],
     },

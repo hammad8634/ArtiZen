@@ -36,6 +36,7 @@ const signInUser = (user, statuscode, res) => {
         name: user.name,
         role: user.role,
         status: user.isVerified,
+        _id: user._id,
       },
     });
   } catch (err) {
@@ -123,6 +124,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
+  
   if (!token) {
     return next(
       new AppError('You are not logged in please login to view the data', 401)
@@ -173,11 +175,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/seller/resetpassword/${resetToken}`;
+  const resetURL = `http://localhost:3001/seller/resetpassword/${resetToken}`;
 
-  const message = `Forgot your password? submit patch request on the given link for the new password ${resetURL} \n If you dont do this please ignore this email`;
+  const message = `Forgot your password? Click on the given link for the new password ${resetURL} \n If you dont do this please ignore this email`;
 
   try {
     await sendEmail({

@@ -7,15 +7,15 @@ const Product = require('../../models/productsModel');
 
 exports.createcart = catchAsync(async (req, res, next) => {
   req.body.user = req.user.id;
-  // console.log(`req.user is ${req.body.user}`);
+  console.log(`req.user is ${req.body.user}`);
 
   const product = await Product.findById(req.params.id);
-  // console.log(`product is: ${product}`);
+  console.log(`product is: ${product}`);
   if (!product) {
     return next(new AppError('Product not found'));
   }
   req.body.productName = product.productName;
-  req.body.photos = product.photos;
+  req.body.productImages = product.productImages;
   req.body.salePrice = product.salePrice;
   req.body.originalPrice = product.originalPrice;
   req.body.quantity = product.quantity;
@@ -38,15 +38,16 @@ exports.createcart = catchAsync(async (req, res, next) => {
       originalPrice,
       quantity,
       salePrice,
-      photos,
+      productImages,
     } = req.body;
+
     const item = {
       productId,
       productName,
       originalPrice,
       quantity,
       salePrice,
-      photos,
+      productImages,
     };
     const existingProduct = await Cart.findOne({
       $and: [{ _id: cart._id }, { 'products.productId': product._id }],
@@ -138,15 +139,32 @@ exports.getNumItemsInCart = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllItemsInCart = catchAsync(async (req, res, next) => {
-  const carts = Cart.findOne({});
+  const carts = await Cart.find({})
+    .populate('productId', 'name price')
+    .populate('user', 'name email')
+    .lean(); // Convert the result to plain JavaScript objects
 
-  if (carts) {
-    res.status(200).json({
-      status: 'success',
-    });
-  } else {
-    return next(new AppError('Error to get all Items.'));
+  if (carts.length === 0) {
+    return next(new AppError('No items found in the cart.', 404));
   }
+  const extractedCarts = carts.map((cart) => {
+    return {
+      productId: cart.productId,
+      productName: cart.productName,
+      productImages: cart.productImages,
+      salePrice: cart.salePrice,
+      quantity: cart.quantity,
+      originalPrice: cart.originalPrice,
+      // user: cart.user,
+    };
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      carts: extractedCarts,
+    },
+  });
 });
 
 // exports.clearCart = catchAsync(async (req, res, next) => {

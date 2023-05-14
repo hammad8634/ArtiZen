@@ -2,6 +2,8 @@ const logger = require('morgan');
 const cors = require('cors');
 const express = require('express');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
+const path = require('path');
 
 const adminRouter = require('./routes/adminRoute');
 const sellerRouter = require('./routes/sellerRoute');
@@ -20,6 +22,11 @@ dotenv.config({ path: './config.env' });
 
 const app = express();
 
+ 
+
+app.use(express.static(__dirname + '/public'));
+app.use('/uploads', express.static('uploads'));
+
 app.use(cors());
 
 app.options('*', cors());
@@ -33,6 +40,15 @@ app.use((req, res, next) => {
   req.requestBody = new Date().toISOString();
   next();
 });
+// app.use(express.bodyParser({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// CORS configuration
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+//   next();
+// });
 
 // routes
 app.use('/api/v1/admin', adminRouter);
@@ -47,10 +63,10 @@ app.use('/api/v1/review', reviewRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/chat', chatRouter);
 
-app.all('*', (req, res, next) => {
-  next(new AppError(`Cant find the provided route: ${req.originalUrl}`));
-});
+// app.all('*', (req, res, next) => {
+//   next(new AppError(`Cant find the provided route: ${req.originalUrl}`));
+// });
 
-app.use(globalErrHandler);
+// app.use(globalErrHandler);
 
 module.exports = app;

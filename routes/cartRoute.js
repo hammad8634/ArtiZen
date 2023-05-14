@@ -10,7 +10,7 @@ router.post(
   buyerauthController.protect,
   cartController.createcart
 );
-router.delete('/:index', cartController.removeItemFromCart);
+router.delete('/:id', cartController.removeItemFromCart);
 router.get('/totalPrice', cartController.getTotalPrice);
 router.get('/numItems', cartController.getNumItemsInCart);
 router.get('/allItems', cartController.getAllItemsInCart);

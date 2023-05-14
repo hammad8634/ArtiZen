@@ -21,5 +21,6 @@ router.patch(
   orderController.updateOrderStatus
 );
 router.delete('/delete/:id', orderController.deleteOrders);
+router.delete('/seller/:id', orderController.getSellerOrders);
 
 module.exports = router;

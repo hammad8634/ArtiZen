@@ -8,8 +8,7 @@ const storeSchema = mongoose.Schema(
     },
     photo: String,
     category: String,
-    subcategory: String,
-    color: {
+    colors: {
       type: String,
     },
     location: {
