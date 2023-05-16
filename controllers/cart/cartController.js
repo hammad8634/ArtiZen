@@ -6,217 +6,270 @@ const Factory = require('../factoryHandler');
 const Product = require('../../models/productsModel');
 
 exports.createcart = catchAsync(async (req, res, next) => {
-  req.body.user = req.user.id;
-  console.log(`req.user is ${req.body.user}`);
+  try {
+    const { userId, productId } = req.body;
 
-  const product = await Product.findById(req.params.id);
-  console.log(`product is: ${product}`);
-  if (!product) {
-    return next(new AppError('Product not found'));
-  }
-  req.body.productName = product.productName;
-  req.body.productImages = product.productImages;
-  req.body.salePrice = product.salePrice;
-  req.body.originalPrice = product.originalPrice;
-  req.body.quantity = product.quantity;
-
-  const cart = await Cart.findOne({ user: { $eq: req.user.id } });
-
-  console.log(`Cart is: ${cart} and cart id: ${req.body.cart}`);
-  if (!cart) {
-    const cart1 = await Cart.create(req.body);
-
-    res.status(201).json({
-      status: 'Success',
-      message: 'cart Created!',
-      cart1,
-    });
-  } else {
-    const {
-      productId,
-      productName,
-      originalPrice,
-      quantity,
-      salePrice,
-      productImages,
-    } = req.body;
-
-    const item = {
-      productId,
-      productName,
-      originalPrice,
-      quantity,
-      salePrice,
-      productImages,
-    };
-    const existingProduct = await Cart.findOne({
-      $and: [{ _id: cart._id }, { 'products.productId': product._id }],
-    }).select('');
-
-    console.log(`ID cart is: ${cart._id} and productId: ${product._id}`);
-
-    console.log(`\nExisting Product: ${existingProduct}`);
-    if (existingProduct) {
-      const updatedQuantity = cart.quantity * 1 - quantity * 1;
-      console.log(`Update Quantity is---:${updatedQuantity}`);
-      console.log(`Cart Quantity is---:${cart.quantity * 1}`);
-      console.log(`Quantity is---:${quantity * 1}`);
-
-      const increment = await Cart.findOneAndUpdate(
-        { _id: cart._id, 'products.productId': productId },
-        { $set: { 'products.$.quantity ': updatedQuantity } }
-      );
-      console.log('body incrementing ---- :', increment);
+    const product = await Product.findById(productId);
+    if (!product) {
+      return next(new AppError('Product not found'));
     }
-    const carts = await Cart.findOneAndUpdate(
-      { id: cart._id },
-      { $push: { products: item } },
-      {}
-    );
-    if (carts) {
+
+    if (product.quantity === 0) {
+      return res.status(400).json({
+        status: 'Error',
+        message: 'Product is out of stock',
+      });
+    }
+
+    const cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+      const newCart = await Cart.create({
+        user: userId,
+        products: [productId],
+        quantity: 1,
+      });
+
+      res.status(201).json({
+        status: 'Success',
+        message: 'Cart created!',
+        cart: newCart,
+      });
+    } else {
+      const existingProduct = cart.products.find(
+        (product) => product.product.toString() === productId
+      );
+
+      if (existingProduct) {
+        existingProduct.quantity += 1;
+      } else {
+        cart.products.push({
+          product: productId,
+          quantity: 1,
+        });
+      }
+
+      await cart.save();
+
       res.status(200).json({
         status: 'success',
         message: 'Product added to cart successfully',
-        products: item,
+        cart,
       });
-    } else {
-      return next(new AppError("Can't add Item due to error"));
     }
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error for cart create API.', error));
   }
 });
 
-// exports.addItemToCart = catchAsync(async (req, res, next) => {
+exports.updateCartItemQuantity = catchAsync(async (req, res, next) => {
+  try {
+    const productId = req.params.id;
+    const { quantity } = req.body;
+    const product = await Product.findById(productId);
+    if (!product) {
+      return next(new AppError('Product not found'));
+    }
+    console.log('found product');
+    const cart = await Cart.findOne({}).lean();
+    console.log('found cart', cart);
+    if (!cart) {
+      return next(new AppError('No cart found', 404));
+    }
+    console.log('found cart 22');
+
+    const cartItemIndex = cart.products.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (cartItemIndex === -1) {
+      return next(new AppError('Cart item not found', 404));
+    }
+
+    cart.products[cartItemIndex].quantity = quantity;
+
+    const updatedCart = await Cart.findByIdAndUpdate(
+      cart._id,
+      { products: cart.products },
+      { new: true }
+    ).lean();
+    res.status(200).json({
+      status: 'success',
+      message: 'Cart item quantity updated successfully',
+      cartItem: updatedCart.products[cartItemIndex],
+    });
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error updating cart item quantity', error));
+  }
+});
 
 exports.removeItemFromCart = catchAsync(async (req, res, next) => {
-  const { index } = req.params;
+  try {
+    const productId = req.params.id; // Assuming the API parameter is named `id`
 
-  const carts = await Cart.findOneAndUpdate(
-    {},
-    { $pull: { items: { _id: index } } }
-  );
-  if (carts) {
+    const cart = await Cart.findOne({}).lean();
+
+    if (!cart) {
+      console.log('No cart found');
+      return next(new AppError('No cart found', 404));
+    }
+
+    const productIndex = cart.products.findIndex(
+      (product) => product.product.toString() === productId
+    );
+
+    console.log('Cart:', cart);
+    console.log('Product Index:', productIndex);
+
+    if (productIndex === -1) {
+      console.log('Product not found in cart');
+      return next(new AppError('Product not found in cart', 404));
+    }
+
+    if (cart.products[productIndex].quantity > 1) {
+      cart.products[productIndex].quantity--;
+    } else {
+      cart.products.splice(productIndex, 1);
+    }
+
+    console.log('Updated Cart:', cart);
+
+    const updatedCart = await Cart.findByIdAndUpdate(cart._id, cart, {
+      new: true,
+    }).lean();
+
+    console.log('Updated Cart:', updatedCart);
+
     res.status(200).json({
       status: 'success',
       message: 'Item removed from cart successfully',
+      cart: updatedCart,
     });
-  } else {
-    return next(new AppError('Error While Removing Item'));
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error while removing item from cart', error));
   }
 });
 
-exports.getTotalPrice = catchAsync(async (req, res, next) => {
-  const carts = await Cart.findOne({});
+exports.addItemToCart = catchAsync(async (req, res, next) => {
+  try {
+    const productId = req.params.id; // Assuming the API parameter is named `id`
 
-  if (carts) {
-    const totalPrice = carts.items.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
+    const cart = await Cart.findOne({}).lean();
+
+    if (!cart) {
+      console.log('No cart found');
+      return next(new AppError('No cart found', 404));
+    }
+
+    const productIndex = cart.products.findIndex(
+      (product) => product.product.toString() === productId
     );
+
+    console.log('Cart:', cart);
+    console.log('Product Index:', productIndex);
+
+    if (productIndex === -1) {
+      cart.products.push({
+        product: productId,
+        quantity: 1,
+      });
+    } else {
+      cart.products[productIndex].quantity++;
+    }
+
+    console.log('Updated Cart:', cart);
+
+    const updatedCart = await Cart.findByIdAndUpdate(cart._id, cart, {
+      new: true,
+    }).lean();
+
+    console.log('Updated Cart:', updatedCart);
+
     res.status(200).json({
       status: 'success',
-      message: `Total Price is ${totalPrice.toFixed(2)}`,
+      message: 'Item added to cart successfully',
+      cart: updatedCart,
     });
-  } else {
-    return next(new AppError('Error While Calculating Total Amount'));
-  }
-});
-
-exports.getNumItemsInCart = catchAsync(async (req, res, next) => {
-  const carts = Cart.findOne({});
-
-  if (carts) {
-    const numItems = carts.items.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
-    res.status(200).json({
-      status: 'success',
-      message: `Total Items are ${numItems}`,
-    });
-  } else {
-    return next(new AppError('Error While Calculating Total Items.'));
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error while adding item to cart', error));
   }
 });
 
 exports.getAllItemsInCart = catchAsync(async (req, res, next) => {
-  const carts = await Cart.find({})
-    .populate('productId', 'name price')
-    .populate('user', 'name email')
-    .lean(); // Convert the result to plain JavaScript objects
+  try {
+    const userId = req.params.id;
 
-  if (carts.length === 0) {
-    return next(new AppError('No items found in the cart.', 404));
-  }
-  const extractedCarts = carts.map((cart) => {
-    return {
-      productId: cart.productId,
-      productName: cart.productName,
-      productImages: cart.productImages,
-      salePrice: cart.salePrice,
-      quantity: cart.quantity,
-      originalPrice: cart.originalPrice,
-      // user: cart.user,
-    };
-  });
+    const cart = await Cart.findOne({ user: userId })
+      .populate({
+        path: 'products',
+        populate: {
+          path: 'product owner store', // Populate nested fields 'product', 'owner', and 'store'
+          select: '-__v -createdAt -updatedAt', // Exclude unnecessary fields
+        },
+        select: '-__v -createdAt -updatedAt', // Exclude unnecessary fields from 'products'
+      })
+      .lean();
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      carts: extractedCarts,
-    },
-  });
-});
+    if (!cart) {
+      return next(new AppError('No cart found for the user.', 404));
+    }
 
-// exports.clearCart = catchAsync(async (req, res, next) => {
-//   const carts = Cart.findOneAndUpdate({}, { $set: { items: [] } });
-
-//   if (carts) {
-//     res.status(200).json({
-//       status: 'success',
-//       message: 'Cart cleared',
-//     });
-//   } else {
-//     return next(new AppError('Error in clearing cart.'));
-//   }
-// });
-
-// exports.getallcarts = catchAsync(async (req, res, next) => {
-//   const carts = await Cart.find();
-
-//   res.status(200).json({
-//     status: 'Success',
-//     cart: carts || `No cart Found`,
-//   });
-// });
-
-// exports.updatecarts = catchAsync(async (req, res, next) => {
-//   const carts = await Cart.updateOne(
-//     { _id: req.params.id },
-//     { $set: req.body }
-//   );
-//   if (carts) {
-//     res.status(200).json({
-//       status: 'success',
-//       message: 'cart updated successfully',
-//     });
-//   } else {
-//     return next(
-//       new AppError("Can't Update cart. As No cart found with such id")
-//     );
-//   }
-// });
-
-exports.deleteCart = catchAsync(async (req, res, next) => {
-  const carts = await Cart.findByIdAndDelete(req.params.id);
-  if (carts) {
     res.status(200).json({
       status: 'success',
-      message: 'cart deleted successfully',
+      message: 'All Cart Products',
+      cart: cart.products,
     });
-  } else {
-    return next(
-      new AppError("Can't Delete cart. As No cart found with such id")
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error while retrieving cart.', error));
+  }
+});
+
+exports.deleteCart = catchAsync(async (req, res, next) => {
+  try {
+    const productId = req.params.id;
+
+    const cart = await Cart.findOne({}).lean();
+
+    if (!cart) {
+      console.log('No cart found');
+      return next(new AppError('No cart found', 404));
+    }
+
+    const productIndex = cart.products.findIndex(
+      (product) => product.product.toString() === productId
     );
+
+    console.log('Cart:', cart);
+    console.log('Product Index:', productIndex);
+
+    if (productIndex === -1) {
+      console.log('Product not found in cart');
+      return next(new AppError('Product not found in cart', 404));
+    }
+
+    cart.products.splice(productIndex, 1);
+
+    console.log('Updated Cart:', cart);
+
+    const updatedCart = await Cart.findByIdAndUpdate(cart._id, cart, {
+      new: true,
+    }).lean();
+
+    console.log('Updated Cart:', updatedCart);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Item removed from cart successfully',
+      cart: updatedCart,
+    });
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error while removing item from cart', error));
   }
 });
 

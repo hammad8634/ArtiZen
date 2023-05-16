@@ -4,19 +4,14 @@ const buyerauthController = require('../controllers/buyer/buyerauthController');
 
 const router = express.Router();
 
-// router.post('/create', cartController.addItemToCart);
-router.post(
-  '/create/:id',
-  buyerauthController.protect,
-  cartController.createcart
+router.post('/create', buyerauthController.protect, cartController.createcart);
+// router.delete('/removeCartItem/:id', cartController.removeItemFromCart);
+router.get('/allItems/:id', cartController.getAllItemsInCart);
+router.delete('/delete/:id', cartController.deleteCart);
+router.patch(
+  '/updateCartItemQuantity/:id',
+  cartController.updateCartItemQuantity
 );
-router.delete('/:id', cartController.removeItemFromCart);
-router.get('/totalPrice', cartController.getTotalPrice);
-router.get('/numItems', cartController.getNumItemsInCart);
-router.get('/allItems', cartController.getAllItemsInCart);
 // router.get('/allcarts', cartController.getallcarts);
-// router.patch('/update', cartController.updatecarts);
-
-router.delete('/delete', cartController.deleteCart);
 
 module.exports = router;

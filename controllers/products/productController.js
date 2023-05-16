@@ -136,6 +136,7 @@ exports.updateProducts = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: 'Product updated successfully',
+      product: products,
     });
   } else {
     return next(
@@ -143,6 +144,86 @@ exports.updateProducts = catchAsync(async (req, res, next) => {
     );
   }
 });
+
+// exports.updateProducts = catchAsync(async (req, res, next) => {
+//   const {id} = req.params;
+//   console.log(`Update Product id id: ${id}`);
+//   const updateFields = req.body;
+
+//   try {
+//     // Find the product by ID
+//     const product = await Product.findById(id);
+//     console.log(`product is: ${product}`);
+//     if (!product) {
+//       return res.status(404).json({
+//         status: 'Error',
+//         message: 'Product not found',
+//         err,
+//       });
+//     }
+
+//     // Update the product details based on the user's specified fields
+//     Object.keys(updateFields).forEach((key) => {
+//       product[key] = updateFields[key];
+//     });
+
+//     // Perform moderation check on updated product details
+//     // const moderationResponse = await axios.post(
+//     //   'http://35.223.95.232:8080/v1/moderate',
+//     //   {
+//     //     title: product.productName,
+//     //     text: product.description,
+//     //   }
+//     // );
+
+//     // if (moderationResponse.data.inappropriate) {
+//     //   return res.status(406).json({
+//     //     status: 'Error',
+//     //     message: 'The product contains inappropriate content.',
+//     //   });
+//     // }
+
+//     // Check if new image files were uploaded
+//     if (req.files && req.files.length > 0) {
+//       const newProductImages = req.files.map(
+//         (file) => `http://localhost:8000/uploads/${file.filename}`
+//       );
+//       product.productImages = newProductImages;
+//     }
+
+//     console.log(`product 22222222 is: ${product}`);
+
+//     // Save the updated product to the database
+//     await product.save();
+
+//     // Perform product model update
+//     // axios
+//     //   .post('http://35.223.95.232:8080/v1/update-product-model', {
+//     //     product_id: product.id,
+//     //   })
+//     //   .then(() => {
+//     //     console.log(`Product id sent is: ${product.id}`);
+//     //   })
+//     //   .catch((error) => {
+//     //     console.log(
+//     //       `Failed to send the updated product ID:, ${error}\n and Product Id; ${product.id}`
+//     //     );
+//     //   });
+
+//     res.status(200).json({
+//       status: 'Success',
+//       message: 'Product updated successfully',
+//       product,
+//     });
+//     console.log('Product updated successfully.');
+//   } catch (err) {
+//     return res.status(400).json({
+//       status: 'Error',
+//       message: `Error updating product: ${err.message}\n`,
+//       console: console.log(`Erro is ${err}`),
+//     });
+//   }
+// });
 
 exports.deleteProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findByIdAndDelete(req.params.id);

@@ -31,6 +31,10 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    soldItem: {
+      type: Number,
+      default: 0,
+    },
     salePrice: {
       type: Number,
       required: [true, 'must have number of sale price'],
