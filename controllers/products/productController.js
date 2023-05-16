@@ -26,24 +26,24 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       salePrice,
       colors,
     } = req.body;
-    //   const moderationResponse = await axios.post(
-    //     'http://35.223.95.232:8080/v1/moderate',
-    //     {
-    //       title: productName,
-    //       text: description,
-    //     }
-    //   );
-    //   console.log(
-    //     `Moderation Response 1 : ${moderationResponse.data.inappropriate}`
-    //   );
-    //   console.log('Success 1');
+      const moderationResponse = await axios.post(
+        'http://35.223.95.232:8080/v1/moderate',
+        {
+          title: productName,
+          text: description,
+        }
+      );
+      console.log(
+        `Moderation Response 1 : ${moderationResponse.data.inappropriate}`
+      );
+      console.log('Success 1');
 
-    // if (moderationResponse.data.inappropriate) {
-    //   return res.status(406).json({
-    //     status: 'Error',
-    //     message: 'The product contains inappropriate content.',
-    //   });
-    // }
+    if (moderationResponse.data.inappropriate) {
+      return res.status(406).json({
+        status: 'Error',
+        message: 'The product contains inappropriate content.',
+      });
+    }
 
     // Check if an image file was uploaded
     if (!req.files || req.files.length === 0) {
@@ -73,18 +73,18 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       colors,
       description,
     });
-    // axios
-    //   .post('http://35.223.95.232:8080/v1/update-product-model', {
-    //     product_id: product.id,
-    //   })
-    //   .then(() => {
-    //     console.log(`Product id sent is: ${product.id}`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(
-    //       `Failed to send the newly created product ID:, ${error}\n and Product Id; ${product.id}`
-    //     );
-    //   });
+    axios
+      .post('http://35.223.95.232:8080/v1/update-product-model', {
+        product_id: product.id,
+      })
+      .then(() => {
+        console.log(`Product id sent is: ${product.id}`);
+      })
+      .catch((error) => {
+        console.log(
+          `Failed to send the newly created product ID:, ${error}\n and Product Id; ${product.id}`
+        );
+      });
 
     res.status(201).json({
       status: 'Success',
