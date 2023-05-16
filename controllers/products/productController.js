@@ -11,14 +11,14 @@ const axios = require('axios').default;
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
 
-  // const { productName, description } = req.body;
+  const { productName, Description } = req.body;
 
   try {
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
     req.body.store = store.id;
     const {
       productName,
-      description,
+      Description,
       video,
       category,
       quantity,
@@ -26,17 +26,17 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       salePrice,
       colors,
     } = req.body;
-      const moderationResponse = await axios.post(
-        'http://35.223.95.232:8080/v1/moderate',
-        {
-          title: productName,
-          text: description,
-        }
-      );
-      console.log(
-        `Moderation Response 1 : ${moderationResponse.data.inappropriate}`
-      );
-      console.log('Success 1');
+    const moderationResponse = await axios.post(
+      'http://35.223.95.232:8080/v1/moderate',
+      {
+        title: productName,
+        text: Description,
+      }
+    );
+    console.log(
+      `Moderation Response 1 : ${moderationResponse.data.inappropriate}`
+    );
+    console.log('Success 1');
 
     if (moderationResponse.data.inappropriate) {
       return res.status(406).json({
@@ -63,7 +63,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       owner: req.body.owner,
       store: req.body.store,
       productName,
-      description,
+      Description,
       productImages,
       video,
       category,
@@ -71,7 +71,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       originalPrice,
       salePrice,
       colors,
-      description,
     });
     axios
       .post('http://35.223.95.232:8080/v1/update-product-model', {
@@ -172,7 +171,7 @@ exports.updateProducts = catchAsync(async (req, res, next) => {
 //     //   'http://35.223.95.232:8080/v1/moderate',
 //     //   {
 //     //     title: product.productName,
-//     //     text: product.description,
+//     //     text: product.Description,
 //     //   }
 //     // );
 
