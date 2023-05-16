@@ -11,14 +11,14 @@ const axios = require('axios').default;
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
 
-  const { productName, Description } = req.body;
+  // const { productName, Ddscription } = req.body;
 
   try {
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
     req.body.store = store.id;
     const {
       productName,
-      Description,
+      description,
       video,
       category,
       quantity,
@@ -30,7 +30,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       'http://35.223.95.232:8080/v1/moderate',
       {
         title: productName,
-        text: Description,
+        text: description,
       }
     );
     console.log(
@@ -63,7 +63,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       owner: req.body.owner,
       store: req.body.store,
       productName,
-      Description,
+      description,
       productImages,
       video,
       category,
@@ -171,7 +171,7 @@ exports.updateProducts = catchAsync(async (req, res, next) => {
 //     //   'http://35.223.95.232:8080/v1/moderate',
 //     //   {
 //     //     title: product.productName,
-//     //     text: product.Description,
+//     //     text: product.description,
 //     //   }
 //     // );
 

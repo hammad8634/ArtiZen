@@ -48,9 +48,9 @@ const productSchema = mongoose.Schema(
       required: [true, 'must have number of sale price'],
     },
 
-    Description: {
+    description: {
       type: String,
-      required: [true, 'must have Description'],
+      required: [true, 'must have description'],
     },
 
     owner: {
