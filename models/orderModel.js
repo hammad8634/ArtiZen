@@ -7,11 +7,6 @@ const orderSchema = new mongoose.Schema(
       ref: 'Buyer',
       required: true,
     },
-    seller: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Seller',
-      // required: true,
-    },
     products: [
       {
         product: {
@@ -20,10 +15,10 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
         quantity: { type: Number, required: true },
-        // productPrice: { type: Number, required: true },
+        productPrice: { type: Number, required: true },
       },
     ],
-    // totalAmount: { type: Number, required: true },
+    totalAmount: { type: Number, required: true },
     orderno: {
       type: String,
       unique: true,
@@ -36,7 +31,6 @@ const orderSchema = new mongoose.Schema(
     },
 
     location: {
-      coordinates: [Number],
       cityName: {
         type: String,
         required: [true, 'Must have name of city'],

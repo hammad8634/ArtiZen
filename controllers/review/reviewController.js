@@ -22,12 +22,12 @@ exports.setProductUser = catchAsync(async (req, res, next) => {
     user: userId,
   });
   console.log(`Order exist value: ${orderExists}`);
-  if (!orderExists) {
-    return res.status(403).json({
-      status: 'failed',
-      message: 'You can only give reviews for products, you have ordered...',
-    });
-  }
+  // if (!orderExists) {
+  //   return res.status(403).json({
+  //     status: 'failed',
+  //     message: 'You can only give reviews for products, you have ordered...',
+  //   });
+  // }
 
   req.body.product = productId;
   req.body.user = userId;
@@ -46,7 +46,7 @@ exports.setProductUser = catchAsync(async (req, res, next) => {
 exports.getAllReviews = catchAsync(async (req, res, next) => { 
   try {
     const reviews = await Review.find();
-
+console.log(`Reviews are: ${reviews.length}`);
     res.status(200).json({
       status: 'success',
       data: {

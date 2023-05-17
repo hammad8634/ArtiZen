@@ -42,22 +42,16 @@ const buyerSchema = mongoose.Schema(
         message: 'Passwords are not same',
       },
     },
-    location: {
-      coordinates: [Number],
-      cityName: {
-        type: String,
-        required: [true, 'Must have name of city'],
-      },
-      province: {
-        type: String,
-        enum: ['Buyer'],
-        default: 'Buyer',
-      },
-      address: {
-        type: String,
-        required: [true, 'must enter location name'],
-      },
+    cityName: {
+      type: String,
+      required: [true, 'Must have name of city'],
     },
+    province: {
+      type: String,
+      enum: ['Punjab', 'Sindh', 'KPK', 'Balochistan', 'Islamabad'],
+      default: 'Punjab',
+    },
+
     passwordChangedAt: {
       type: Date,
     },

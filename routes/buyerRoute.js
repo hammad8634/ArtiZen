@@ -13,6 +13,7 @@ router.route('/login').post(buyerauthController.login);
 router.route('/resetpassword/:token').patch(buyerauthController.resetPassword);
 router.route('/forgotpassword').post(buyerauthController.forgotPassword);
 router.route('/delete/:id').delete(buyerController.deleteBuyer);
+router.patch('/update/:id', buyerauthController.updateStatus);
 
 // router.patch('/emailconfirm/:token', authController.emailConfirm);
 

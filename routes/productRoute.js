@@ -29,12 +29,13 @@ router.post(
 
 router.get('/all', productController.getallproducts);
 router.get(
-  '/seller/all/',
+  '/seller/all/:id',
   sellerauthController.protect,
   productController.getallsellerproducts
 );
 router.get('/one/:id', productController.getoneproduct);
 router.patch('/update/:id', productController.updateProducts);
 router.delete('/delete/:id', productController.deleteProducts);
+router.get('/recommmendation/:id', productController.generateRecommendation);
 
 module.exports = router;

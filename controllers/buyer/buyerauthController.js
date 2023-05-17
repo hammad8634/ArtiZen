@@ -58,6 +58,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     location: req.body.location,
+    cityName: req.body.cityName,
+    province: req.body.province,
   });
 
   req.user = newUser;
@@ -155,6 +157,29 @@ exports.restrictTo = function (...roles) {
     next();
   };
 };
+
+exports.updateStatus = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const { isVerified } = req.body;
+
+  const buyer = await Buyer.findByIdAndUpdate(
+    id,
+    { isVerified },
+    { new: true }
+  );
+
+  if (!buyer) {
+    return next(new AppError('Buyer not found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Buyer status updated',
+    data: {
+      buyer,
+    },
+  });
+});
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await Buyer.findOne({ email: req.body.email });

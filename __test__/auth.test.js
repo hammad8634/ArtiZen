@@ -24,31 +24,31 @@ describe('API Tests', () => {
       const response = await supertest(app)
         .post('/api/v1/buyer/login')
         .send(user);
-      // console.log(
-      //   `Response of 1st test: ${JSON.stringify(response.body)} and status: ${
-      //     response.status
-      //   }`
-      // );
+      console.log(
+        `Response of 1st test: ${JSON.stringify(response.body)} and status: ${
+          response.status
+        }`
+      );
       assert.equal(response.status, 201);
       assert.property(response.body, 'token');
     });
   });
 
-  describe('POST /api/v1/admin/create', () => {
-    it('Admin SignUp Form (Should not create other admin, because first admin is not login.', async () => {
+  describe('POST /api/v1/seller/create', () => {
+    it('Seller SignUp Form (Should not create other seller, because first seller is not login.', async () => {
       const user = {
         name: 'Hammad Mukhtar',
-        user: 'hammadAdmin2@gmail.com',
-        password: 'admin321',
-        passwordConfirm: 'admin321',
+        user: 'hammadSeller2@gmail.com',
+        password: 'seller321',
+        passwordConfirm: 'seller321',
       };
-      const response = await supertest(app).post('/api/v1/admin/create');
-      //   .send(user);
-      // console.log(
-      //   `Response of 2nd test: ${JSON.stringify(response.body)} and status: ${
-      //     response.status
-      //   }`
-      // );
+      const response = await supertest(app).post('/api/v1/seller/create');
+        .send(user);
+      console.log(
+        `Response of 2nd test: ${JSON.stringify(response.body)} and status: ${
+          response.status
+        }`
+      );
       assert.equal(response.status, 200);
     });
   });

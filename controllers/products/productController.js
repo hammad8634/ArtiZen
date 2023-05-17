@@ -5,13 +5,14 @@ const catchAsync = require('../../utils/catchAsync');
 const Factory = require('../factoryHandler');
 const OrderProduct = require('../../models/orderProductsModel');
 const axios = require('axios').default;
+const Order = require('../../models/orderModel');
 
 // const Seller = require('../../models/sellerModel');
 
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.owner = req.user.id;
 
-  // const { productName, Ddscription } = req.body;
+  // const { productName, description } = req.body;
 
   try {
     const store = await Store.findOne({ owner: { $eq: req.user.id } });
@@ -235,6 +236,71 @@ exports.deleteProducts = catchAsync(async (req, res, next) => {
     return next(
       new AppError("Can't Delete Product. As No Product found with such id")
     );
+  }
+});
+
+exports.generateRecommendation = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  console.log('Generating recommendation user id ', userId);
+  let product_id = null;
+  const num_responses = 5;
+
+  // Check if the user has created an order
+  const order = await Order.findOne({ owner: userId });
+  console.log('before check order ', order);
+  if (order) {
+    console.log(' yes order found');
+
+    // If the user has created an order, get a product ID from the order
+    const productIds = order.products.map((product) => product.productId);
+    product_id = productIds[Math.floor(Math.random() * productIds.length)];
+  } else {
+    console.log(' no order found, go for sold item');
+
+    // If no order created, find a product with the highest soldItems count
+    const products = await Product.find().sort({ soldItems: -1 }).limit(1);
+    if (products.length > 0) {
+      console.log(' sold item found');
+
+      product_id = products[0]._id;
+    } else {
+      console.log('no sold item, random product');
+
+      // If no soldItems, get a random product ID from any product
+      const randomProduct = await Product.findOne();
+      if (randomProduct) {
+        product_id = randomProduct._id;
+      }
+    }
+  }
+
+  console.log('Product ID: ' + product_id);
+  try {
+    console.log('call ml api ');
+
+    // Call the ML API with the product_id
+    const recommendationResponse = await axios.post(
+      'http://35.223.95.232:8080/v1/recommend-product',
+      {
+        product_id,
+        num_responses,
+      }
+    );
+    console.log('response recoomd model', recommendationResponse);
+
+    // Handle the recommendation response here
+
+    res.status(200).json({
+      status: 'Success',
+      product_id,
+      recommendationResponse: recommendationResponse.data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: 'Error',
+      message: `Failed to generate recommendation with error ${err.message}`,
+      // error: console.log(`Error is ${err.message}`),
+    });
   }
 });
 

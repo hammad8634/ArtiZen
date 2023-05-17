@@ -11,6 +11,7 @@ router.post('/create', sellerauthController.signup);
 router.route('/login').post(sellerauthController.login);
 router.route('/resetpassword/:token').patch(sellerauthController.resetPassword);
 router.route('/forgotpassword').post(sellerauthController.forgotPassword);
+router.patch('/update/:id', sellerauthController.updateStatus);
 
 // router.patch('/emailconfirm/:token', authController.emailConfirm);
 

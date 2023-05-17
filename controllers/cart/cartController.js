@@ -26,8 +26,7 @@ exports.createcart = catchAsync(async (req, res, next) => {
     if (!cart) {
       const newCart = await Cart.create({
         user: userId,
-        products: [productId],
-        quantity: 1,
+        products: [{ product: productId, quantity: 1 }],
       });
 
       res.status(201).json({
@@ -36,23 +35,20 @@ exports.createcart = catchAsync(async (req, res, next) => {
         cart: newCart,
       });
     } else {
-      const existingProduct = cart.products.find(
-        (product) => product.product.toString() === productId
+      const existingProductIndex = cart.products.findIndex(
+        (item) => item.product.toString() === productId
       );
 
-      if (existingProduct) {
-        existingProduct.quantity += 1;
+      if (existingProductIndex !== -1) {
+        cart.products[existingProductIndex].quantity += 1;
       } else {
-        cart.products.push({
-          product: productId,
-          quantity: 1,
-        });
+        cart.products.push({ product: productId, quantity: 1 });
       }
 
       await cart.save();
 
       res.status(200).json({
-        status: 'success',
+        status: 'Success',
         message: 'Product added to cart successfully',
         cart,
       });

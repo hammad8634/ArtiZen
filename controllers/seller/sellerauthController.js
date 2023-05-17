@@ -124,7 +124,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
-  
   if (!token) {
     return next(
       new AppError('You are not logged in please login to view the data', 401)
@@ -235,6 +234,30 @@ exports.updatePass = catchAsync(async (req, res, next) => {
   await user.save();
 
   signInUser(user, 201, res);
+});
+
+
+exports.updateStatus = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const { isVerified } = req.body;
+
+  const seller = await Seller.findByIdAndUpdate(
+    id,
+    { isVerified },
+    { new: true }
+  );
+
+  if (!seller) {
+    return next(new AppError('Seller not found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Seller status updated',
+    data: {
+      seller,
+    },
+  });
 });
 
 // exports.sendEmailConfirm = catchAsync(async (req, res, next) => {

@@ -40,6 +40,67 @@ exports.createOrder = catchAsync(async (req, res, next) => {
   });
 });
 
+// exports.createOrder = catchAsync(async (req, res, next) => {
+//   const {
+//     email,
+//     firstName,
+//     lastName,
+//     cityName,
+//     address,
+//     streetNumber,
+//     phone,
+//     paymentMethod,
+//   } = req.body;
+//   const user = req.user.id;
+
+//   if (!req.paid) {
+//     return next(new AppError('Payment Failed', 404));
+//   }
+
+//   // Get the user's cart details and populate the products field
+//   const userCart = await Cart.findOne({ user }).populate('products.product');
+
+//   if (!userCart) {
+//     return next(new AppError('Cart not found', 404));
+//   }
+
+//   // Calculate the total amount based on cart products
+//   let totalAmount = 0;
+//   const products = userCart.products.map((cartItem) => {
+//     const product = cartItem.product;
+//     const quantity = cartItem.quantity;
+//     const productTotalAmount = quantity * product.salePrice;
+//     totalAmount += productTotalAmount;
+//     return {
+//       product: product._id,
+//       quantity,
+//       productTotalAmount,
+//     };
+//   });
+
+//   const order = new Order({
+//     user,
+//     products,
+//     totalAmount,
+//     email,
+//     firstName,
+//     lastName,
+//     cityName,
+//     address,
+//     streetNumber,
+//     phone,
+//     paymentMethod,
+//   });
+//   order.paymentStatus = 'Done';
+//   await order.save();
+
+//   res.status(201).json({
+//     status: 'Success',
+//     message: 'Product Order Created!',
+//     order,
+//   });
+// });
+
 // Get all orders
 exports.getAllOrders = catchAsync(async (req, res, next) => {
   const orders = await Order.find()
